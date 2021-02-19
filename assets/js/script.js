@@ -66,9 +66,18 @@ document.querySelector('#book-form').addEventListener('submit', (e)=>{
     const autor = document.querySelector('#author').value;
     const isbn = document.querySelector('#isbn').value;
     
-    const livro = new Livros(titulo, autor, isbn);
+    //Validação
+    if (titulo === '' || autor === '' || isbn === '') {
+        alert('Por favor preencha todos os campos obrigatórios!');
+    } else {
+        //Instanciando o livro
+        const livro = new Livros(titulo, autor, isbn);
+        //adicionando um livro na lista        
+        UI.addLivroNaLista(livro);
+        //limpando campos
+        UI.clearFields();
+    }
 
-    UI.addLivroNaLista(livro);
 
 });
 
