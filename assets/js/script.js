@@ -8,20 +8,7 @@ class Livros {
 
 class UI {
     static exibirLivros() {
-        const lista = [
-            {
-                titulo: 'Livro um',
-                autor: 'Jhonatan Ribeiro',
-                isbn: '323536'
-            },
-            {
-                titulo: 'Livro dois',
-                autor: 'Jhonatan Ribeiro',
-                isbn: '323536'
-            }
-        ];
-
-        const livros = lista;
+        const livros = Store.getLivros();
 
         livros.forEach((livro) => UI.addLivroNaLista(livro));
     }
@@ -80,11 +67,24 @@ class Store {
         }
         return livros;
     }
+    
     static addLivro(livro) {
+        const livros = Store.getLivros();
+        livros.push(livro);
 
+        localStorage.setItem('livros', JSON.stringify(livros));
     }
-    static removeLivro(isbn){
 
+    static removeLivro(isbn){
+        const livros = Store.getLivros();
+
+        livros.forEach((livro, index)=>{
+            if(livro.isbn === isbn) {
+                livros.splice(index,1);
+            }
+        });
+
+        localStorage.setItem('livros', JSON.stringify(livros));
     }
 }
 
@@ -105,6 +105,10 @@ document.querySelector('#book-form').addEventListener('submit', (e)=>{
         const livro = new Livros(titulo, autor, isbn);
         //adicionando um livro na lista        
         UI.addLivroNaLista(livro);
+
+        //adiciona livro no localStorage
+        Store.addLivro(livro);
+
         //exibe a mensahem de sucesso
         UI.showAlert('Livro adicionado com sucesso!','success');
         //limpando campos
@@ -116,8 +120,11 @@ document.querySelector('#book-form').addEventListener('submit', (e)=>{
 //Evento: remover livro
 document.querySelector('#book-list').addEventListener('click', (e)=>{
     e.preventDefault();
-    
+    //remove o livro de UI
     UI.deletarLivro(e.target);
+
+    //remove o livro do localStorage
+    Store.removeLivro(e.target.parentElement.previousElementSibling.textContent);
 
       //exibe a mensahem de sucesso
       UI.showAlert('Livro removido com sucesso!','success');
